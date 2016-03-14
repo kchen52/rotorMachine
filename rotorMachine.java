@@ -1,5 +1,6 @@
 class RotorMachine {
     public static void main(String args[]) {
-        System.out.println("Hello world!");
+        Rotor testRotor = new Rotor(7);
+        testRotor.printMappings();
     }
 }

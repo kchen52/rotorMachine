@@ -6,10 +6,8 @@ class Rotor {
 
     private int numberOfPins = 40; 
     private String pins = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ,.?";
-    /*private Character[] pins = {'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',
-        '0','1','2','3','4','5','6','7','8','9',' ',',','.','?'};*/
-    private int[] mappingsAsInt = new int[40]; 
-    private String mappingsAsString = "";
+
+    private String mappings = "";
 
     // Initialise the rotor based on the parameter given
     public Rotor(int someValue) {
@@ -18,25 +16,32 @@ class Rotor {
         for (int i = 0; i < numberOfPins; i++) {
             int intValue = (int)pins.charAt(i);
             int newMapping = (intValue * (someValue % numberOfPins)) % numberOfPins;
-            while (Arrays.asList(mappingsAsInt).contains(newMapping)) {
-                System.out.println("Array already has value " + newMapping);
+
+            while (mappings.indexOf(pins.charAt(newMapping)) != -1) {
+                //System.out.println("Array already has value " + pins.charAt(newMapping));
                 newMapping++;
+                if (newMapping >= 40) {
+                    newMapping = 0;
+                }
             }
-            mappingsAsInt[i] = newMapping;
-        }
-        for (int i = 0; i < mappingsAsInt.length; i++) {
-            mappingsAsString += pins.charAt(mappingsAsInt[i]);
+            mappings += pins.charAt(newMapping);
         }
     }
 
 
 
     public void printMappings() {
-        for (int i = 0; i < mappingsAsString.length(); i++) {
-            System.out.print(mappingsAsString.charAt(i) + ", ");
-        }
-        System.out.print("\n");
+        System.out.println(mappings);
     }
-    public void rotate() {
+
+    public void rotateRotors() {
+        // Shift each value in mappings to the right by one, with the last value being shift into the first position 
+        char oldLastValue = mappings.charAt(mappings.length()-1);
+        String newMappings = "";
+        newMappings += oldLastValue; 
+        for (int i = 0; i < mappings.length()-1; i++) {
+            newMappings += mappings.charAt(i);
+        }
+        mappings = newMappings;
     }
 }
