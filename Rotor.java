@@ -7,6 +7,10 @@ class Rotor {
     private int numberOfPins = 40; 
     private String pins = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ,.?";
 
+    // DEBUG FUNCTION:
+    public void printOriginalPins() {
+        System.out.println(pins);
+    }
     private String mappings = "";
 
     // Initialise the rotor based on the parameter given
@@ -28,6 +32,14 @@ class Rotor {
         }
     }
 
+    public char encryptChar(char incoming) {
+        int index = pins.indexOf(incoming);
+        if (index == -1) {
+            // An invalid incoming character, return garbage
+            return '#';
+        }
+        return mappings.charAt(index);
+    }
 
 
     public void printMappings() {
