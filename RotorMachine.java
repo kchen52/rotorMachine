@@ -1,15 +1,18 @@
+import java.util.ArrayList;
+
 class RotorMachine {
+    // Need at least 5 security schemes
+    String securitySchemes[] = {"7-11-13"};
+
+    // Need at least 2 rotors
+    ArrayList<Rotor> rotors = new ArrayList<Rotor>();
+
     public static void main(String args[]) {
-        Rotor testRotor = new Rotor(7);
-        testRotor.printMappings();
-        testRotor.rotateRotors();
-        testRotor.printMappings();
-        testRotor.printOriginalPins();
-        // Any input will be converted to uppercase
-        String userInput = "HELLO WORLD";
-        for (int i = 0; i < userInput.length(); i++) {
-            char currentChar = Character.toUpperCase(userInput.charAt(i));
-            System.out.println("Encrypting " + currentChar + " gives us " + testRotor.encryptChar(currentChar));
-        }
+        int securitySchemeChosen = 0;
+        String securityScheme = securitySchemes[securitySchemeChosen];
+        //int numberOfRotors = StringUtils.countMatches(securityScheme, "-")+1;
+
+        //System.out.println("Number of rotors: " + numberOfRotors);
+
     }
 }
