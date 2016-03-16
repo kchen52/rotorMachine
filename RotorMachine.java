@@ -1,32 +1,27 @@
 import java.util.ArrayList;
 
 class RotorMachine {
+	public RotorMachine() {}
 	private static  String pins = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ,.?";
 
-	// Need at least 5 security schemes
-	private static String securitySchemes[] = {"7-11-13"};
+	// Need at least 5 security schemes, with at least 2 rotors each
+	private static String securitySchemes[] = {"7-11-13", "5-31-19-7", "73-23", "211-73-31", "403-173-73"};
 
-	// Need at least 2 rotors
 	private static ArrayList<Rotor> rotors = new ArrayList<Rotor>();
 
 	public static void main(String args[]) {
-		int securitySchemeChosen = 0;
+		int securitySchemeChosen = 2;
 		String securityScheme = securitySchemes[securitySchemeChosen];
 		int numberOfRotors = numberOfTimesCharAppeared('-', securityScheme)+1;
 
 		for (int i = 0; i < numberOfRotors; i++) {
 			int rotorInitValue = Integer.parseInt(securityScheme.split("-")[i]);
-			//System.out.println("Rotor Init value: " + rotorInitValue);
 			rotors.add(new Rotor(rotorInitValue));
 		}
-		/*System.out.println(pins);
-		for (Rotor rotor : rotors) {
-			rotor.printMappings();
-		}*/
 
-		String userInput = "Hello world";
+		String userInput = "Hello me?";
 
-		String encryptedMessage = encryptMessage(userInput, rotors);
+		String encryptedMessage = encryptMessage(userInput);
 		System.out.println("Encrypted message: " + encryptedMessage);
 
 		// Testing purposes
@@ -36,12 +31,12 @@ class RotorMachine {
 			//System.out.println("Rotor Init value: " + rotorInitValue);
 			clientSide.add(new Rotor(rotorInitValue));
 		}
-		String decryptedMessage = decryptMessage(encryptedMessage, clientSide);
+		String decryptedMessage = decryptMessage(encryptedMessage);
 		System.out.println("Decrypted message: " + decryptedMessage);
-		
+
 	}
 
-	private static String encryptMessage(String message, ArrayList<Rotor> rotors) {
+	public static String encryptMessage(String message) {
 		// If the message isn't already uppercase, uppercase it
 		message = message.toUpperCase();
 
@@ -60,7 +55,7 @@ class RotorMachine {
 				// For debug purposes
 				char old = currentCharacter;
 				currentCharacter = rotors.get(j).encryptChar(currentCharacter);
-				System.out.println(old + " converted to " + currentCharacter);
+				//System.out.println(old + " converted to " + currentCharacter);
 			}
 			encryptedMessage += currentCharacter;
 
@@ -87,8 +82,8 @@ class RotorMachine {
 		return encryptedMessage;
 	}
 
-	private static String decryptMessage(String message, ArrayList<Rotor> rotors) {
-		
+	public static String decryptMessage(String message) {
+
 		// According to Java language spec, the default value for each element in the array is set to 0,
 		// which is what we want here
 		int numberOfRotors = rotors.size();
