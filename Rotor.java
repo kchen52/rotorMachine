@@ -7,10 +7,6 @@ class Rotor {
     private int numberOfPins = 40; 
     private String pins = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ,.?";
 
-    // DEBUG FUNCTION:
-    public void printOriginalPins() {
-        System.out.println(pins);
-    }
     private String mappings = "";
 
     // Initialise the rotor based on the parameter given
@@ -30,6 +26,8 @@ class Rotor {
             }
             mappings += pins.charAt(newMapping);
         }
+		
+			
     }
 
     public char encryptChar(char incoming) {
@@ -46,7 +44,7 @@ class Rotor {
         System.out.println(mappings);
     }
 
-    public void rotateRotors() {
+    public void rotateRotor() {
         // Shift each value in mappings to the right by one, with the last value being shift into the first position 
         char oldLastValue = mappings.charAt(mappings.length()-1);
         String newMappings = "";
