@@ -40,6 +40,10 @@ class Rotor {
     }
 
 
+	public String getMapping() {
+		return mappings;
+	}
+
     public void printMappings() {
         System.out.println(mappings);
     }
@@ -52,6 +56,17 @@ class Rotor {
         for (int i = 0; i < mappings.length()-1; i++) {
             newMappings += mappings.charAt(i);
         }
+        mappings = newMappings;
+    }
+
+    public void rotateRotorBackwards() {
+        // Shift each value in mappings to the right by one, with the last value being shift into the first position 
+        char oldFirstValue = mappings.charAt(0);
+        String newMappings = "";
+        for (int i = 1; i < mappings.length(); i++) {
+            newMappings += mappings.charAt(i);
+        }
+        newMappings += oldFirstValue; 
         mappings = newMappings;
     }
 }

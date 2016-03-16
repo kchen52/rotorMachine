@@ -18,20 +18,33 @@ class RotorMachine {
 			int rotorInitValue = Integer.parseInt(securityScheme.split("-")[i]);
 			//System.out.println("Rotor Init value: " + rotorInitValue);
 			rotors.add(new Rotor(rotorInitValue));
-
-
 		}
-		System.out.println(pins);
+		/*System.out.println(pins);
 		for (Rotor rotor : rotors) {
 			rotor.printMappings();
+		}*/
+
+		String userInput = "Hello world";
+
+		String encryptedMessage = encryptMessage(userInput, rotors);
+		System.out.println("Encrypted message: " + encryptedMessage);
+
+		// Testing purposes
+		ArrayList<Rotor> clientSide = new ArrayList<Rotor>();
+		for (int i = 0; i < numberOfRotors; i++) {
+			int rotorInitValue = Integer.parseInt(securityScheme.split("-")[i]);
+			//System.out.println("Rotor Init value: " + rotorInitValue);
+			clientSide.add(new Rotor(rotorInitValue));
 		}
-		System.out.println(encryptMessage("HELLO WORLD", rotors));
-		//encryptMessage(pins + pins + pins + pins + pins, rotors);
+		String decryptedMessage = decryptMessage(encryptedMessage, clientSide);
+		System.out.println("Decrypted message: " + decryptedMessage);
+		
 	}
 
 	private static String encryptMessage(String message, ArrayList<Rotor> rotors) {
 		// If the message isn't already uppercase, uppercase it
-		message.toUpperCase();
+		message = message.toUpperCase();
+
 		String encryptedMessage = "";
 
 		// According to Java language spec, the default value for each element in the array is set to 0,
@@ -42,7 +55,6 @@ class RotorMachine {
 		for (int i = 0; i < message.length(); i++) {
 			char currentCharacter = message.charAt(i);
 			int indexOfCharacter = pins.indexOf(currentCharacter);
-			
 
 			for (int j = 0; j < rotors.size(); j++) {
 				// For debug purposes
@@ -76,11 +88,42 @@ class RotorMachine {
 	}
 
 	private static String decryptMessage(String message, ArrayList<Rotor> rotors) {
+		
+		// According to Java language spec, the default value for each element in the array is set to 0,
+		// which is what we want here
+		int numberOfRotors = rotors.size();
+		int[] rotorRotationStatus = new int[numberOfRotors];
+
 		String decryptedMessage = "";
 		for (int i = 0; i < message.length(); i++) {
+			char currentChar = message.charAt(i);
+			for (int j = rotors.size()-1; j >= 0; j--) {
+				int index = rotors.get(j).getMapping().indexOf(currentChar);
+				currentChar = pins.charAt(index);
+			}
+			decryptedMessage += currentChar;
 
+			// Always rotate the last rotor in the sequence
+			rotors.get(rotors.size()-1).rotateRotor();
+			rotorRotationStatus[numberOfRotors-1]++;
+
+			// If a rotor has done a full revolution, rotate the rotor before it, if it exists
+			boolean rotateNextRotor = false;
+			for (int j = numberOfRotors-1; j >= 0; j--) {
+				if (rotateNextRotor) {
+					rotors.get(j).rotateRotor();
+					rotorRotationStatus[j]++;
+					rotateNextRotor = false;
+				}
+
+				if (rotorRotationStatus[j] >= 40) {
+					// Rotate the rotor before this one
+					rotateNextRotor = true;
+					rotorRotationStatus[j] = 0;
+				} 
+			}
 		}
-		
+
 		return decryptedMessage;
 	}
 
