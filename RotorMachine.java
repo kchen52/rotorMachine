@@ -1,15 +1,22 @@
 import java.util.ArrayList;
 
 class RotorMachine {
-	private static  String pins = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ,.?";
+	public RotorMachine() {}
+	private String pins = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ,.?";
 
 	// Need at least 5 security schemes, with at least 2 rotors each
-	private static String securitySchemes[] = {"7-11-13", "5-31-19-7", "73-23", "211-73-31", "403-173-73"};
+	private String securitySchemes[] = {"7-11-13", "5-31-19-7", "73-23", "211-73-31", "403-173-73"};
 
-	private static ArrayList<Rotor> rotors = new ArrayList<Rotor>();
+	private ArrayList<Rotor> rotors = new ArrayList<Rotor>();
+	private int securityScheme = 0;
 
-	public static void initRotor() {
-		int securitySchemeChosen = 2;
+	public void initRotor(int securitySchemeChosen) {
+
+		if (0 < securitySchemeChosen || securitySchemeChosen > 4) {
+			// Default to 0
+			securitySchemeChosen = 0;
+		}
+
 		String securityScheme = securitySchemes[securitySchemeChosen];
 		int numberOfRotors = numberOfTimesCharAppeared('-', securityScheme)+1;
 
@@ -19,7 +26,7 @@ class RotorMachine {
 		}
 	}
 
-	public static String encryptMessage(String message) {
+	public String encryptMessage(String message) {
 		// If the message isn't already uppercase, uppercase it
 		message = message.toUpperCase();
 
@@ -65,7 +72,7 @@ class RotorMachine {
 		return encryptedMessage;
 	}
 
-	public static String decryptMessage(String message) {
+	public String decryptMessage(String message) {
 
 		// According to Java language spec, the default value for each element in the array is set to 0,
 		// which is what we want here
@@ -77,7 +84,11 @@ class RotorMachine {
 			char currentChar = message.charAt(i);
 			for (int j = rotors.size()-1; j >= 0; j--) {
 				int index = rotors.get(j).getMapping().indexOf(currentChar);
-				currentChar = pins.charAt(index);
+				if (index == -1) { 
+					currentChar = '#';
+				} else {
+					currentChar = pins.charAt(index);
+				}
 			}
 			decryptedMessage += currentChar;
 
@@ -105,7 +116,7 @@ class RotorMachine {
 		return decryptedMessage;
 	}
 
-	private static int numberOfTimesCharAppeared(char lookFor, String temp) {
+	private int numberOfTimesCharAppeared(char lookFor, String temp) {
 		int counter = 0;
 		for (int i = 0; i < temp.length(); i++) {
 			if (temp.charAt(i) == lookFor) {
