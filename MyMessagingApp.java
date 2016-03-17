@@ -74,7 +74,6 @@ class App {
 		} catch (UnknownHostException e) {
 			System.out.println("Error: IP Address of hostname \"" + serverAddress + "\" could not be determined");
 		} catch (IOException e) {
-			e.printStackTrace();
 		}
 	}
 
@@ -98,8 +97,7 @@ class App {
 			machine.initRotor(2);
 			serverSocket = new ServerSocket(portNumber);
 			clientSocket = serverSocket.accept();
-			// TODO: Clarify where the connection is established with
-			System.out.println("Connection established!");
+			System.out.println("Connection established with " + clientSocket.getInetAddress());
 			System.out.println("Type 'exit' at anytime to close this application.");
 			while (true) {
 				BufferedReader fromClient = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
@@ -131,13 +129,8 @@ class App {
 			clientSocket.close();
 			serverSocket.close();
 		} catch (SocketException e) {
-			/*clientSocket.close();
-			  serverSocket.close();*/
 		} catch (IOException e) {
-			e.printStackTrace();
 		} catch (NullPointerException e) {
-			/*clientSocket.close();
-			  serverSocket.close();*/
 		}
 	} 
 }
