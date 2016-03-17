@@ -1,7 +1,6 @@
 import java.util.ArrayList;
 
 class RotorMachine {
-	public RotorMachine() {}
 	private static  String pins = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ,.?";
 
 	// Need at least 5 security schemes, with at least 2 rotors each
@@ -9,7 +8,7 @@ class RotorMachine {
 
 	private static ArrayList<Rotor> rotors = new ArrayList<Rotor>();
 
-	public static void main(String args[]) {
+	public static void initRotor() {
 		int securitySchemeChosen = 2;
 		String securityScheme = securitySchemes[securitySchemeChosen];
 		int numberOfRotors = numberOfTimesCharAppeared('-', securityScheme)+1;
@@ -18,22 +17,6 @@ class RotorMachine {
 			int rotorInitValue = Integer.parseInt(securityScheme.split("-")[i]);
 			rotors.add(new Rotor(rotorInitValue));
 		}
-
-		String userInput = "Hello me?";
-
-		String encryptedMessage = encryptMessage(userInput);
-		System.out.println("Encrypted message: " + encryptedMessage);
-
-		// Testing purposes
-		ArrayList<Rotor> clientSide = new ArrayList<Rotor>();
-		for (int i = 0; i < numberOfRotors; i++) {
-			int rotorInitValue = Integer.parseInt(securityScheme.split("-")[i]);
-			//System.out.println("Rotor Init value: " + rotorInitValue);
-			clientSide.add(new Rotor(rotorInitValue));
-		}
-		String decryptedMessage = decryptMessage(encryptedMessage);
-		System.out.println("Decrypted message: " + decryptedMessage);
-
 	}
 
 	public static String encryptMessage(String message) {
@@ -53,7 +36,7 @@ class RotorMachine {
 
 			for (int j = 0; j < rotors.size(); j++) {
 				// For debug purposes
-				char old = currentCharacter;
+				//char old = currentCharacter;
 				currentCharacter = rotors.get(j).encryptChar(currentCharacter);
 				//System.out.println(old + " converted to " + currentCharacter);
 			}

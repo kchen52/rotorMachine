@@ -18,6 +18,7 @@ class App {
 			return;
 		}
 
+		RotorMachine.initRotor();
 		if (clientMode) {
 			// ---------------------------------------------------------------
 			// Do client stuff here...
@@ -47,7 +48,9 @@ class App {
 					if (sentence.equals("terminate")) {
 						someCondition = true;
 					}
+					System.out.print("Enter text: ");
 					String encryptedIncomingMessage = fromServer.readLine();
+					encryptedIncomingMessage = encryptedIncomingMessage.replaceAll("\\n", "");
 					String decryptedIncomingMessage = RotorMachine.decryptMessage(encryptedIncomingMessage);
 					System.out.println("From server: " + decryptedIncomingMessage);
 				}
@@ -81,8 +84,10 @@ class App {
 					DataOutputStream toClient = new DataOutputStream(clientSocket.getOutputStream());
 
 					String encryptedTextFromClient = fromClient.readLine();
+					encryptedTextFromClient = encryptedTextFromClient.replaceAll("\\n", "");
 					String decryptedTextFromClient = RotorMachine.decryptMessage(encryptedTextFromClient);
 					
+					System.out.println("From client: " + decryptedTextFromClient);
 					// Take user input, encrypt it, and send it to client
 					System.out.print("Enter text: ");
 					String sentence = System.console().readLine();
