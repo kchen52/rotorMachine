@@ -1,9 +1,12 @@
 import java.io.*;
 import java.net.*;
+import java.util.Random;
 
 class App {
+	private static final int PRIME_NUMBER = 23;
+	private static final int PRIMITIVE_ROOT = 5;
+	
 	public static void main(String args[]) {
-
 		RotorMachine machine = new RotorMachine();
 
 		boolean clientMode = false;
@@ -29,6 +32,7 @@ class App {
 		return;
 	}
 
+
 	public static void clientMode(RotorMachine machine) {
 		System.out.print("Enter the server's address: ");
 		String serverAddress = System.console().readLine();
@@ -37,12 +41,35 @@ class App {
 		int portNumber = Integer.parseInt(System.console().readLine());
 
 		try {
-			// TODO: SET SECURITY SCHEME DYNAMICALLY
-			machine.initRotor(2);
 			BufferedReader fromUser = new BufferedReader (new InputStreamReader(System.in));
 			Socket clientSocket = new Socket(serverAddress, portNumber);
 			DataOutputStream toServer = new DataOutputStream(clientSocket.getOutputStream());
 			BufferedReader fromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+
+			System.out.println("Determining security scheme...");
+			// Start diffie-hellman encryption
+			// Predefined public values have already been set	
+			// Client chooses a random integer
+			int secretNumber = randomNumber(1, 10);	
+			System.out.println("Randomly generated number is " + secretNumber);
+			System.out.println("Sending to server: " + Integer.toString((int)(Math.pow(PRIMITIVE_ROOT, secretNumber) % PRIME_NUMBER)));
+			
+			// Send the server (PRIMITIVE_ROOT^secretNumber) mod PRIME_NUMBER
+			toServer.writeBytes(Integer.toString((int)(Math.pow(PRIMITIVE_ROOT, secretNumber) % PRIME_NUMBER)) + '\n');
+
+			// Wait for the server to do the same thing with its own secret number, and read that in
+			String serverNumberFormatted = fromServer.readLine();
+			System.out.println("Got " + serverNumberFormatted + " from the server");
+			// The following substring function gets rid of the newline at the end so we can parse it properly
+			serverNumberFormatted = serverNumberFormatted.replaceAll("\\n", "");
+			int serverNumber = Integer.parseInt(serverNumberFormatted);
+			
+			// Now determine the actual secret number
+			// (server'sNumber)^secretNumber mod PRIME_NUMBER
+			int sharedSecretNumber = (int)(Math.pow(serverNumber, secretNumber) % PRIME_NUMBER);
+			System.out.println("SECRET NUMBER IS " + sharedSecretNumber);
+			
+			machine.initRotor(sharedSecretNumber);
 
 			System.out.println("Connection established! Now accepting input.");
 			System.out.println("Type 'exit' at anytime to close this application.");
@@ -93,15 +120,32 @@ class App {
 		System.out.println("Waiting for a connection...");
 
 		try {
-			// TODO: Diffie hellman stuff
-			machine.initRotor(2);
 			serverSocket = new ServerSocket(portNumber);
 			clientSocket = serverSocket.accept();
+			
+			// NOTE TO SELF: the following 2 lines were originally in the while loop...
+			// if the code isn't working anymore, move them back
+			BufferedReader fromClient = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+			DataOutputStream toClient = new DataOutputStream(clientSocket.getOutputStream());
+
+			int serverSecret = randomNumber(1, 10);	
+			System.out.println("Randomly generated number is " + serverSecret);
+			System.out.println("Sending to client: " + Integer.toString((int)(Math.pow(PRIMITIVE_ROOT, serverSecret) % PRIME_NUMBER)));
+			// Send the client (PRIMITIVE_ROOT ^ secretNumber) mod PRIME_NUMBER
+			toClient.writeBytes(Integer.toString((int)(Math.pow(PRIMITIVE_ROOT, serverSecret) % PRIME_NUMBER)) + '\n');
+
+			// Read in the client's number, and apply clientNumber^secretNumber mod PRIME_NUMBER
+			String clientNumberFormatted = fromClient.readLine();
+			System.out.println("Got " + clientNumberFormatted + " from the client");
+			clientNumberFormatted = clientNumberFormatted.replaceAll("\\n", "");
+			int clientNumber = Integer.parseInt(clientNumberFormatted);
+			int sharedSecretNumber = (int)(Math.pow(clientNumber, serverSecret) % PRIME_NUMBER);
+			System.out.println("Shared secret number is " + sharedSecretNumber);
+
+			machine.initRotor(sharedSecretNumber);
 			System.out.println("Connection established with " + clientSocket.getInetAddress());
 			System.out.println("Type 'exit' at anytime to close this application.");
 			while (true) {
-				BufferedReader fromClient = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-				DataOutputStream toClient = new DataOutputStream(clientSocket.getOutputStream());
 
 				System.out.println("Waiting for client message...\r");
 				String encryptedTextFromClient = fromClient.readLine();
@@ -133,4 +177,9 @@ class App {
 		} catch (NullPointerException e) {
 		}
 	} 
+
+	private static int randomNumber(int min, int max) {
+		Random rand = new Random();
+		return rand.nextInt((max - min) + 1) + min;
+	}
 }

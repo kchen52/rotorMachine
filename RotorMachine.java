@@ -5,16 +5,20 @@ class RotorMachine {
 	private String pins = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ,.?";
 
 	// Need at least 5 security schemes, with at least 2 rotors each
-	private String securitySchemes[] = {"7-11-13", "5-31-19-7", "73-23", "211-73-31", "403-173-73"};
+	private String securitySchemes[] = {"7-11-13", "5-31-19-7", "73-23", "211-73-31", "403-173-73", "23-67-91",
+		"317-257-193", "73-71-19", "31-311-293", "101-61-5", "17-113-7", "331-823-37", "229-541-181", "47-269-59" };
 
 	private ArrayList<Rotor> rotors = new ArrayList<Rotor>();
 	private int securityScheme = 0;
 
 	public void initRotor(int securitySchemeChosen) {
+		
 
-		if (0 < securitySchemeChosen || securitySchemeChosen > 4) {
+		if (0 < securitySchemeChosen) {
 			// Default to 0
 			securitySchemeChosen = 0;
+		} else if (securitySchemeChosen > 13) {
+			securitySchemeChosen = 13;
 		}
 
 		String securityScheme = securitySchemes[securitySchemeChosen];
